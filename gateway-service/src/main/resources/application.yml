@@ -1,0 +1,48 @@
+server:
+  port: 9191
+
+spring:
+  application:
+    name: GATEWAY-SERVICE
+
+  cloud:
+    gateway:
+      routes:
+      - id: DEPARTMENT-SERVICE
+        uri:
+          lb://DEPARTMENT-SERVICE
+        predicates:
+        - Path=/department/**
+        filters:
+        - name: CircuitBreaker
+          args:
+            name: DEPARTMRNT-SERVICE
+            fallbackuri: forward/departmentServiceFallBack
+      - id: USER-SERVICE
+        uri:
+          lb://USER-SERVICE
+        predicates:
+        - Path=/user/**
+        filters:
+        - name: CircuitBreaker
+          args:
+            name: USER-SERVICE
+            fallbackuri: forward:/userServiceFallBack
+            
+            
+            
+hystrix:
+  command:
+   fallbackcmd:
+    excution:
+      isolation:
+       thread:
+        timeoutInMiliSeconds: 4000
+
+eureka:
+  instance:
+    hostname: localhost
+
+         
+            
+            
